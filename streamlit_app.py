@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 from snowflake.snowpark.functions import col
+from cryptography.hazmat.primitives import serialization
 
 # Write directly to the app
 st.title(f" :cup_with_straw: Customize Your Smoothie!:cup_with_straw: {st.__version__}")
@@ -11,7 +12,19 @@ st.write(
 name_on_order = st.text_input('Name on Smoothie:')
 st.write('The name on your Smoothie will be:', name_on_order)
 
-cnx = st.connection("snowflake")
+
+key_cfg = st.secrets["snowflake_key"]
+p_key = serialization.load_pem_private_key(
+    key_cfg["pem"].encode(),
+    password=key_cfg["passphrase"].encode(),
+)
+pkb = p_key.private_bytes(
+    encoding=serialization.Encoding.DER,
+    format=serialization.PrivateFormat.PKCS8,
+    encryption_algorithm=serialization.NoEncryption(),
+)
+
+cnx = st.connection("snowflake", private_key=pkb)
 session = cnx.session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 #st.dataframe(data=my_dataframe, use_container_width=True)
