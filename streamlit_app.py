@@ -62,6 +62,10 @@ for fruit_chosen in ingredients_list:
     st.subheader(fruit_chosen + ' Nutrition Information')
     url = "https://my.smoothiefroot.com/api/fruit/" + fruit_chosen.lower()
     smoothiefroot_response = requests.get(url)
+
+    st.write(url)                                    # debug
+    st.write(smoothiefroot_response.status_code)
+  
     if smoothiefroot_response.status_code == 200:
         sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
     else:
