@@ -58,9 +58,12 @@ if ingredients_list:
 
 import requests
 
-st.write(requests.get("https://my.smoothiefroot.com/api/fruit/apple").status_code)
-st.write(requests.get("https://my.smoothiefroot.com/api/fruit/apple").text)
-#smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon](https://my.smoothiefroot.com/api/fruit/watermelon")  
-#st.text(smoothiefroot_response.json())
-#sf_df = st.dataframe(data = smoothiefroot_response.json(), use_container_width = True)
+for fruit_chosen in ingredients_list:
+    st.subheader(fruit_chosen + ' Nutrition Information')
+    url = "https://my.smoothiefroot.com/api/fruit/" + fruit_chosen.lower()
+    smoothiefroot_response = requests.get(url)
+    if smoothiefroot_response.status_code == 200:
+        sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+    else:
+        st.warning(f"{fruit_chosen} information is not available from our nutrition provider.")
 
